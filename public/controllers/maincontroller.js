@@ -44,9 +44,7 @@ app.controller('mainController', function($scope,$http) {
 	$scope.addTransaction = function(){
 		let transactionToPush = angular.copy($scope.newTransaction);
 		if (transactionToPush.type == "charge"){
-			transactionToPush.charge = transactionToPush.amount;
-		} else {
-			transactionToPush.credit = transactionToPush.amount;
+			transactionToPush.amount = transactionToPush.amount * -1;
 		}
 		$http({
 			method:'POST',

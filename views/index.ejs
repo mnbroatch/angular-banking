@@ -5,7 +5,6 @@
 		<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script> 
 		<script src="/bower_components/bootstrap/js/button.js"></script>
 		<script src="/bower_components/angular/angular.js"></script>
-		<!-- <script src="/bower_components/angular&#45;resource/angular&#45;resource.js"></script> -->
 		<script src="/controllers/maincontroller.js"></script>
 		<link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css" media="all"> 
 		<script src="/bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
@@ -58,8 +57,8 @@
 					<tr ng-data="blah" ng-repeat='transaction in transactions track by $index'>
 						<td>{{transaction.description}}</td>
 						<td>{{transaction.date | date : mediumDate}}</td>
-						<td>{{transaction.charge | currency}}</td>
-						<td>{{transaction.credit | currency}}</td>
+						<td><span ng-if="transaction.amount <= 0">{{transaction.charge * -1 | currency}}</span></td>
+						<td><span ng-if="transaction.amount > 0">{{transaction.credit | currency}}</span></td>
 						<td>
 							<button class="delete-button btn btn-danger "ng-click="removeItem($index)">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
