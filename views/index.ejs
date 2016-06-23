@@ -61,8 +61,8 @@
 						<td>{{transaction.charge | currency}}</td>
 						<td>{{transaction.credit | currency}}</td>
 						<td>
-							<button class="delete-button btn btn-danger">
-								<span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="removeItem($index)"></span>
+							<button class="delete-button btn btn-danger "ng-click="removeItem($index)">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 							</button>
 						</td>
 					</tr>

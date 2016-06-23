@@ -5,6 +5,7 @@ db.query(`create table if not exists transactions(
 	id varchar(100),
 	description varchar(1000),
 	amount float,
+	date varchar(100),
 	type varchar(100)
 )`);
 
@@ -27,8 +28,10 @@ exports.getOneTransaction = function(id){
 }
 
 exports.insertTransaction = function(transaction){
-	return new Promise( function(resolve,reject){
 		transaction.id = uuid();
+		delete transaction.charge;
+		delete transaction.credit;
+		return new Promise( function(resolve,reject){
 		db.query('insert into transactions set ?',transaction, (err,transactionArray) => {
 			if (err) return reject(err);
 			resolve(transaction);

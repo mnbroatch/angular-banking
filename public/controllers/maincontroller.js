@@ -31,16 +31,18 @@ app.controller('mainController', function($scope,$http) {
 		url: '/transactions'
 	})
 	.then( function(transactions){
-		transactions.forEach( transaction => {
-			$scope.transactions.push(transaction);
-		});
+		if(transactions.data.length){
+			transactions.data.forEach( transaction => {
+				$scope.transactions.push(transaction);
+			});
+		}
 	})
 	.catch( err => {
 		console.log(err);
 	});
 
 	$scope.addTransaction = function(){
-		let transactionToCreate = angular.copy($scope.newTransaction);
+		let transactionToPush = angular.copy($scope.newTransaction);
 		if (transactionToPush.type == "charge"){
 			transactionToPush.charge = transactionToPush.amount;
 		} else {
@@ -48,21 +50,22 @@ app.controller('mainController', function($scope,$http) {
 		}
 		$http({
 			method:'POST',
-			url: '/transactions'
+			url: '/transactions',
+			data:transactionToPush
 		})
-		.then( function(transaction){
-			$scope.transactions.push(transaction);
+		.then( function(response){
+			$scope.transactions.push(response.data);
 		})
 		.catch( err => {
 			console.log(err);
 		});
-		$scope.transactions.push(transactionToPush);
 	}
 
 	$scope.removeItem = function(index){
+	console.log('del');
 		$http({
 			method:'DELETE',
-			url: '/' + index
+			url: '/transactions/' + $scope.transactions[index].id
 		})
 		.then( function(){
 			$scope.transactions.splice(index,1);
