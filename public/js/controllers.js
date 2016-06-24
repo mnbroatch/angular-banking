@@ -3,10 +3,10 @@
 
 angular.module('bankingApp', ['ui.bootstrap']).controller('mainController', function($scope,$http,Trans) {
 
+	$scope.transactions = [];
 	$scope.newTransaction = {};
 	$scope.newTransaction.type = "charge";
 
-	$scope.transactions = [];
 
 	$scope.$watch('transactions', function(newTrans){
 		$scope.totalCharges = newTrans.reduce( (a,b) => {
@@ -26,6 +26,7 @@ angular.module('bankingApp', ['ui.bootstrap']).controller('mainController', func
 		},0);
 	}, true);
 
+
 	Trans.getAll()
 	.then( function(transes){
 		if(transes){
@@ -37,20 +38,11 @@ angular.module('bankingApp', ['ui.bootstrap']).controller('mainController', func
 	.catch( err => {
 		console.log(err);
 	});
-
-
-	$scope.addTransaction = function(){
-		let transactionToPush = angular.copy($scope.newTransaction);
-		if (transactionToPush.type == "charge"){
-			transactionToPush.amount = transactionToPush.amount * -1;
-		}
-		$http({
-			method:'POST',
-			url: '/transactions',
-			data:transactionToPush
-		})
-		.then( function(response){
-			$scope.transactions.push(response.data);
+	
+	$scope.addTransaction = function(transaction){
+		Trans.addOne(transaction)
+		.then( function(trans){
+			$scope.transactions.push(trans);
 		})
 		.catch( err => {
 			console.log(err);
@@ -58,10 +50,7 @@ angular.module('bankingApp', ['ui.bootstrap']).controller('mainController', func
 	}
 
 	$scope.removeItem = function(index){
-		$http({
-			method:'DELETE',
-			url: '/transactions/' + $scope.transactions[index].id
-		})
+		Trans.removeOne($scope.transactions[index])
 		.then( function(){
 			$scope.transactions.splice(index,1);
 		})

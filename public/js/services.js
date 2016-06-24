@@ -3,6 +3,7 @@
 angular.module('bankingApp').service('Trans', function($http, $q){
 
 
+
 	//  what does the first return do?
 	this.getAll = () => {
 		return $http({
@@ -13,22 +14,39 @@ angular.module('bankingApp').service('Trans', function($http, $q){
 			if (res.data.length)
 				return $q.resolve(res.data);
 		})
-		.catch(err => {console.log('err: ', err)});		
+		.catch(err => {
+			console.log('err: ', err);
+		});
 	}
-});
 
-	this.getAll = () => {
+	this.addOne = (transaction) => {
+		if (transaction == "charge"){
+			transaction.amount = transaction.amount * -1;
+		}
 		return $http({
-			method:'GET',
-			url: '/transactions'
+			method:'POST',
+			url: '/transactions',
+			data:transactionToPush
 		})
 		.then( res => {
-			if (res.data.length)
+			if (res.data){
 				return $q.resolve(res.data);
+			}
 		})
-		.catch(err => {console.log('err: ', err)});		
+		.catch(err => {console.log('err: ', err)});
 	}
 
+	this.removeOne = (transaction) => {
+		return $http({
+			method:'DELETE',
+			url: '/transactions/' + transaction.id
+		});
+	}
+
+
+
+
+});
 
 
 
