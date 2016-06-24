@@ -26,7 +26,7 @@ angular.module('bankingApp').service('Trans', function($http, $q){
 		return $http({
 			method:'POST',
 			url: '/transactions',
-			data:transactionToPush
+			data: transaction
 		})
 		.then( res => {
 			if (res.data){
