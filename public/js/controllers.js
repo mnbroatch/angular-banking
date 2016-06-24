@@ -1,45 +1,43 @@
 "use strict;"
 
 
-let app = angular.module('bankingApp', ['ui.bootstrap']);
+angular.module('bankingApp', ['ui.bootstrap']).controller('mainController', function($scope,$http,Trans) {
 
-app.controller('mainController', function($scope,$http) {
+	$scope.newTransaction = {};
+	$scope.newTransaction.type = "charge";
 
 	$scope.transactions = [];
 
-	$scope.totalCharges = $scope.transactions.reduce( (a,b) => {
-		if (b.type == 'charge')
-			return a + b.amount;
-		else return a;
-	},0);
+	$scope.$watch('transactions', function(newTrans){
+		$scope.totalCharges = newTrans.reduce( (a,b) => {
+			if (b.type == 'charge')
+				return a + b.amount;
+			else return a;
+		},0);
 
-	$scope.totalCredits = $scope.transactions.reduce( (a,b) => {
-		if (b.type == 'credit')
-			return a + b.amount;
-		else return a;
-	},0);
+		$scope.totalCredits = newTrans.reduce( (a,b) => {
+			if (b.type == 'credit')
+				return a + b.amount;
+			else return a;
+		},0);
 
-	$scope.totalBalance = $scope.transactions.reduce( (a,b) => {
-		if (b.type == 'credit')
+		$scope.totalBalance = newTrans.reduce( (a,b) => {
 			return a + b.amount;
-		else 
-			return a - b.amount;
-	},0);
+		},0);
+	}, true);
 
-	$http({
-		method:'GET',
-		url: '/transactions'
-	})
-	.then( function(transactions){
-		if(transactions.data.length){
-			transactions.data.forEach( transaction => {
-				$scope.transactions.push(transaction);
+	Trans.getAll()
+	.then( function(transes){
+		if(transes){
+			transes.forEach( trans => {
+				$scope.transactions.push(trans);
 			});
 		}
 	})
 	.catch( err => {
 		console.log(err);
 	});
+
 
 	$scope.addTransaction = function(){
 		let transactionToPush = angular.copy($scope.newTransaction);
@@ -60,7 +58,6 @@ app.controller('mainController', function($scope,$http) {
 	}
 
 	$scope.removeItem = function(index){
-	console.log('del');
 		$http({
 			method:'DELETE',
 			url: '/transactions/' + $scope.transactions[index].id

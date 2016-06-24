@@ -288,7 +288,9 @@ inoremap [ []O
 vnoremap ∆ :m '>+1gv=gv
 nnoremap ∆ :m .+1==
 inoremap { {}O	
-iabbr lOg console.log();hh
+iabbr Sc $scope
+iabbr <L> console.log();hhi
+iabbr <angularbootstrapbower> <script src="/bower_components/angular-ui-bootstrap/index.js"></script> 
 iabbr <errcons> if(err) console.log('err: ',err); 
 iabbr <csspug> link(href='/css/style.css', rel='stylesheet')
 iabbr <css> <link rel="stylesheet" href="style.css" media="all">
@@ -310,11 +312,14 @@ let &cpo=s:cpo_save
 unlet s:cpo_save
 set background=dark
 set backspace=start
+set comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,://
+set commentstring=//%s
 set directory=~/.vim/backups//
 set fileencodings=ucs-bom,utf-8,default,latin1
 set helplang=en
 set isfname=@,48-57,/,.,-,_,+,,,#,$,%,~,=,@-@
 set iskeyword=@,48-57,_,192-255,-
+set operatorfunc=TCommentOpFunc_gc
 set runtimepath=~/.vim,~/.vim/bundle/ctrlp,~/.vim/bundle/emmet-vim,~/.vim/bundle/javascript-libraries-syntax.vim,~/.vim/bundle/matchit,~/.vim/bundle/node,~/.vim/bundle/tcomment_vim-master,~/.vim/bundle/vim-indent-guides,~/.vim/bundle/vim-javascript,~/.vim/bundle/vim-js-indent,~/.vim/bundle/vim-js-indent-master,~/.vim/bundle/vim-pug,/usr/local/share/vim/vimfiles,/usr/local/share/vim/vim74,/usr/local/share/vim/vimfiles/after,~/.vim/bundle/javascript-libraries-syntax.vim/after,~/.vim/after
 set shiftwidth=2
 set tabstop=2
@@ -327,12 +332,15 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +17 public/js/main.js
-badd +0 views/index.ejs
-badd +46 ~/.vimrc
+badd +32 models/transaction.js
+badd +11 public/js/controllers.js
+badd +47 ~/.vimrc
+badd +41 views/index.ejs
+badd +11 public/js/services.js
+badd +14 routes/transactions.js
 argglobal
 silent! argdel *
-edit public/js/main.js
+edit public/js/controllers.js
 set splitbelow splitright
 wincmd _ | wincmd |
 vsplit
@@ -462,15 +470,25 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-let s:l = 17 - ((16 * winheight(0) + 25) / 51)
+6
+normal! zo
+let s:l = 47 - ((26 * winheight(0) + 27) / 54)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-17
-normal! 0
+47
+normal! 011|
 wincmd w
 argglobal
-edit views/index.ejs
+edit public/js/services.js
+let s:cpo_save=&cpo
+set cpo&vim
+nmap <buffer> gf <Plug>NodeTabGotoFile
+nmap <buffer>  <Plug>NodeVSplitGotoFile 
+nmap <buffer> f <Plug>NodeVSplitGotoFile 
+nmap <buffer> gf <Plug>NodeGotoFile
+let &cpo=s:cpo_save
+unlet s:cpo_save
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
@@ -486,8 +504,8 @@ setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
 setlocal cinoptions=
 setlocal cinwords=if,else,while,do,for,switch
 setlocal colorcolumn=
-setlocal comments=s:<!--,m:\ \ \ \ ,e:-->
-setlocal commentstring=<!--%s-->
+setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,://
+setlocal commentstring=//%s
 setlocal complete=.,w,b,u,t,i
 setlocal concealcursor=
 setlocal conceallevel=0
@@ -503,8 +521,8 @@ setlocal nodiff
 setlocal equalprg=
 setlocal errorformat=
 setlocal noexpandtab
-if &filetype != 'html'
-setlocal filetype=html
+if &filetype != 'javascript'
+setlocal filetype=javascript
 endif
 setlocal fixendofline
 setlocal foldcolumn=0
@@ -520,15 +538,15 @@ setlocal foldminlines=1
 setlocal foldnestmax=20
 setlocal foldtext=foldtext()
 setlocal formatexpr=
-setlocal formatoptions=tcq
+setlocal formatoptions=croql
 setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
 setlocal grepprg=
 setlocal iminsert=0
 setlocal imsearch=0
-setlocal include=
-setlocal includeexpr=
-setlocal indentexpr=HtmlIndentGetter(v:lnum)
-setlocal indentkeys=o,O,*<Return>,<>>,{,}
+setlocal include=\\<require(\\([\"']\\)\\zs[^\\1]\\+\\ze\\1
+setlocal includeexpr=node#lib#find(v:fname,\ bufname('%'))
+setlocal indentexpr=GetJsIndent(v:lnum)
+setlocal indentkeys=
 setlocal noinfercase
 setlocal iskeyword=@,48-57,_,192-255,-,$
 setlocal keywordprg=
@@ -537,15 +555,15 @@ setlocal nolisp
 setlocal lispwords=
 setlocal nolist
 setlocal makeprg=
-setlocal matchpairs=(:),{:},[:],<:>
+setlocal matchpairs=(:),{:},[:]
 setlocal modeline
 setlocal modifiable
 setlocal nrformats=bin,octal,hex
 set number
 setlocal number
 setlocal numberwidth=4
-setlocal omnifunc=htmlcomplete#CompleteTags
-setlocal path=
+setlocal omnifunc=javascriptcomplete#CompleteJS
+setlocal path=.,,
 setlocal nopreserveindent
 setlocal nopreviewwindow
 setlocal quoteescape=\\
@@ -563,11 +581,11 @@ setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
 setlocal spellfile=
 setlocal spelllang=en
 setlocal statusline=
-setlocal suffixesadd=
+setlocal suffixesadd=.js,.js,.json,.es,.jsx
 setlocal swapfile
 setlocal synmaxcol=3000
-if &syntax != 'html'
-setlocal syntax=html
+if &syntax != 'javascript'
+setlocal syntax=javascript
 endif
 setlocal tabstop=2
 setlocal tagcase=
@@ -580,13 +598,26 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-let s:l = 1 - ((0 * winheight(0) + 25) / 51)
+6
+normal! zo
+8
+normal! zo
+13
+normal! zo
+20
+normal! zo
+21
+normal! zo
+26
+normal! zo
+let s:l = 8 - ((7 * winheight(0) + 27) / 54)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1
-normal! 0
+8
+normal! 09|
 wincmd w
+2wincmd w
 exe 'vert 1resize ' . ((&columns * 95 + 95) / 191)
 exe 'vert 2resize ' . ((&columns * 95 + 95) / 191)
 tabnext 1

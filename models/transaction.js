@@ -29,8 +29,6 @@ exports.getOneTransaction = function(id){
 
 exports.insertTransaction = function(transaction){
 		transaction.id = uuid();
-		delete transaction.charge;
-		delete transaction.credit;
 		return new Promise( function(resolve,reject){
 		db.query('insert into transactions set ?',transaction, (err,transactionArray) => {
 			if (err) return reject(err);

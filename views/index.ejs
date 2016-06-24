@@ -5,7 +5,9 @@
 		<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script> 
 		<script src="/bower_components/bootstrap/js/button.js"></script>
 		<script src="/bower_components/angular/angular.js"></script>
-		<script src="/controllers/maincontroller.js"></script>
+		<script src="/js/controllers.js"></script>
+		<script src="/js/services.js"></script>
+		<script src="/js/module.js"></script>
 		<link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css" media="all"> 
 		<script src="/bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
 		<meta charset="UTF-8">
@@ -17,7 +19,6 @@
 
 
 			<h1>Bankular</h1>
-
 
 			<div class="row">
 				<div class="col-sm-6">
@@ -36,7 +37,7 @@
 						</div>
 
 						<div class="btn-group">
-							<label class="btn btn-primary" ng-model="newTransaction.type" uib-btn-radio="'charge'">Charge</label checked>
+							<label class="btn btn-primary active" ng-model="newTransaction.type" uib-btn-radio="'charge'">Charge</label>
 								<label class="btn btn-primary" ng-model="newTransaction.type" uib-btn-radio="'credit'">Credit</label>
 							</div>
 							<button class="btn btn-primary">Submit</button>
@@ -57,8 +58,8 @@
 					<tr ng-data="blah" ng-repeat='transaction in transactions track by $index'>
 						<td>{{transaction.description}}</td>
 						<td>{{transaction.date | date : mediumDate}}</td>
-						<td><span ng-if="transaction.amount <= 0">{{transaction.charge * -1 | currency}}</span></td>
-						<td><span ng-if="transaction.amount > 0">{{transaction.credit | currency}}</span></td>
+						<td><span ng-if="transaction.amount <= 0">{{transaction.amount * -1 | currency}}</span></td>
+						<td><span ng-if="transaction.amount > 0">{{transaction.amount | currency}}</span></td>
 						<td>
 							<button class="delete-button btn btn-danger "ng-click="removeItem($index)">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -74,7 +75,7 @@
 					<tr>
 						<td></td>
 						<td></td>
-						<td>{{totalCharges | currency}}</td>
+						<td>{{totalCharges * -1 | currency}}</td>
 						<td>{{totalCredits | currency}}</td>
 					</tr>
 					<thead>
