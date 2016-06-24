@@ -28,7 +28,6 @@ angular.module('bankingApp').service('Trans', function($http, $q){
 		})
 		.catch(err => {console.log('err: ', err)});		
 	}
-});
 
 
 
